@@ -186,6 +186,23 @@ class CameraRoll {
     }
     return RNCCameraRoll.getPhotos(params);
   }
+
+  static getSelectedPhoto(params: selectedPhotoId): Promise<string> {
+    if (Platform.OS == 'android') {
+      console.warn(
+        'CameraRoll.getSelectedPhoto(selectedPhotoId) can be used only with iOS. In Android platform we do not require this method.',
+      );
+    }
+    if (arguments.length > 1) {
+      let successCallback = arguments[1];
+      const errorCallback = arguments[2] || (() => {});
+      RNCCameraRoll.getSelectedPhoto(params).then(
+        successCallback,
+        errorCallback,
+      );
+    }
+    return RNCCameraRoll.getSelectedPhoto(params);
+  }
 }
 
 module.exports = CameraRoll;

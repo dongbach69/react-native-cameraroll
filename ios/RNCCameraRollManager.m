@@ -384,6 +384,51 @@ RCT_EXPORT_METHOD(deletePhotos:(NSArray<NSString *>*)assets
   ];
 }
 
+RCT_EXPORT_METHOD(getSelectedPhoto:(NSString *)selectedPhotoId
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+{
+  checkPhotoLibraryConfig();
+  
+  requestPhotoLibraryAccess(reject, ^{
+    
+    PHFetchResult<PHAsset *> *fetchResult;
+    PHAsset *asset;
+    
+    fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[selectedPhotoId] options:nil];
+    if(fetchResult){
+      asset = fetchResult.firstObject;//only object in the array.
+    }
+    
+    if(asset){
+      __block NSURL *imageURL = [[NSURL alloc]initWithString:@""];
+      
+      [asset requestContentEditingInputWithOptions:[PHContentEditingInputRequestOptions new] completionHandler:^(PHContentEditingInput *contentEditingInput, NSDictionary *info) {
+        imageURL = contentEditingInput.fullSizeImageURL;
+        if (imageURL.absoluteString.length != 0) {
+          resolve(imageURL.absoluteString);
+        } else {
+          NSError *error = [NSError errorWithDomain:@"some_domain"
+                                               code:100
+                                           userInfo:@{
+                                                      NSLocalizedDescriptionKey:@"Something went wrong"
+                                                      }];
+          reject(@"Error while getting file path",@"",error);
+        }
+      }];
+      
+    } else {
+      NSError *error = [NSError errorWithDomain:@"some_domain"
+                                           code:404
+                                       userInfo:@{
+                                                  NSLocalizedDescriptionKey:@"Something went wrong"
+                                                  }];
+      reject(@"No photo found",@"",error);
+    }
+    
+  });
+}
+
 static void checkPhotoLibraryConfig()
 {
 #if RCT_DEV

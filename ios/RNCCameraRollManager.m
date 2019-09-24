@@ -406,24 +406,22 @@ RCT_EXPORT_METHOD(getSelectedPhoto:(NSString *)selectedPhotoId
       [asset requestContentEditingInputWithOptions:[PHContentEditingInputRequestOptions new] completionHandler:^(PHContentEditingInput *contentEditingInput, NSDictionary *info) {
         imageURL = contentEditingInput.fullSizeImageURL;
         if (imageURL.absoluteString.length != 0) {
+          imageURL.absoluteString = [imageURL.absoluteString stringByReplacingOccurrencesOfString:@"pathfile:"
+                                                                                       withString:@"file:"];
           resolve(imageURL.absoluteString);
         } else {
-          NSError *error = [NSError errorWithDomain:@"some_domain"
-                                               code:100
-                                           userInfo:@{
-                                                      NSLocalizedDescriptionKey:@"Something went wrong"
-                                                      }];
+          NSString *errorMessage = [NSString stringWithFormat:@"Failed to load asset"
+                                    " with localIdentifier %@ with no error message.", selectedPhotoId];
+          NSError *error = RCTErrorWithMessage(errorMessage);
           reject(@"Error while getting file path",@"",error);
         }
       }];
       
     } else {
-      NSError *error = [NSError errorWithDomain:@"some_domain"
-                                           code:404
-                                       userInfo:@{
-                                                  NSLocalizedDescriptionKey:@"Something went wrong"
-                                                  }];
-      reject(@"No photo found",@"",error);
+      NSString *errorMessage = [NSString stringWithFormat:@"Failed to load asset"
+                                " with localIdentifier %@ with no error message.", selectedPhotoId];
+      NSError *error = RCTErrorWithMessage(errorMessage);
+      reject(@"No asset found",@"",error);
     }
     
   });

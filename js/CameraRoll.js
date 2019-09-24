@@ -190,7 +190,7 @@ class CameraRoll {
   static getSelectedPhoto(params: selectedPhotoId): Promise<string> {
     if (Platform.OS == 'android') {
       console.warn(
-        'CameraRoll.getSelectedPhoto(selectedPhotoId) can be used only with iOS. In Android platform we do not require this method.',
+        'CameraRoll.getSelectedPhoto(selectedPhotoId) can only be used with iOS. Android platform does not require this method.',
       );
     }
     if (arguments.length > 1) {

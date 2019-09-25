@@ -171,7 +171,7 @@ Returns a Promise which when resolved will be of the following shape:
 
 ---
 
-### `getSelectedPhoto()`
+### `getSelectedPhoto()` - iOS only
 
 ```javascript
 CameraRoll.getSelectedPhoto(params);

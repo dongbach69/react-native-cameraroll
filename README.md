@@ -169,6 +169,50 @@ Returns a Promise which when resolved will be of the following shape:
   * `start_cursor`: {string}
   * `end_cursor`: {string}
 
+### `getSelectedPhoto()`
+
+```javascript
+CameraRoll.getSelectedPhoto(params);
+```
+
+Returns a Promise with photo identifier object from the local camera roll of the device.
+
+**Parameters:**
+
+| Name   | Type   | Required | Description                                      |
+| ------ | ------ | -------- | ------------------------------------------------ |
+| params | string | Yes      | Expects a params with the shape described below. |
+
+* `uri` : {string} : This is uri of selected photo which is returned from a previous call to `getPhotos`. of the format  Required.
+Ex. **ph://ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED/L0/001**
+**OR**
+* `localIdentifier` : {string} : A unique identifier of photo returned from a previous call to `getPhotos`. Ex. **ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED/L0/001**
+
+**Note**
+Any one of the parameter is required. 
+
+Returns a Promise which when resolved will be of the following shape:
+
+* `node`: {object} An object with the following shape:
+  * `type`: {string}
+  * `image`: {object} : An object with the following shape:
+    * `filepath`: {string}
+    * `filename`: {string}
+    * `height`: {number}
+    * `width`: {number}
+    * `isStored`: {boolean}
+    * `playableDuration`: {number}
+  * `timestamp`: {number}
+  * `location`: {object} : An object with the following shape:
+    * `latitude`: {number}
+    * `longitude`: {number}
+    * `altitude`: {number}
+    * `heading`: {number}
+    * `speed`: {number}
+
+### Note
+`getSelectedPhoto()` method works only in **iOS**
+
 #### Example
 
 Loading images:
@@ -184,6 +228,15 @@ _handleButtonPress = () => {
      })
      .catch((err) => {
         //Error Loading Images
+     });
+
+     CameraRoll.getSelectedPhoto(`ph://ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED/L0/001 `)
+     .then(r => {
+       //Use this filepath to upload image to server.
+       console.log(r.node.image.filepath);
+     })
+     .catch((err) => {
+        //No selected image found
      });
    };
 render() {

@@ -183,8 +183,7 @@ Returns a Promise with photo identifier object from the local camera roll of the
 | ------ | ------ | -------- | ------------------------------------------------ |
 | params | string | Yes      | Expects a params with the shape described below. |
 
-* `uri` : {string} : This is uri of selected photo which is returned from a previous call to `getPhotos`. of the format  Required.
-Ex. **ph://ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED/L0/001**
+* `uri` : {string} : This is uri of selected photo which is returned from a previous call to `getPhotos`. Of the format **ph://ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED/L0/001**
 **OR**
 * `localIdentifier` : {string} : A unique identifier of photo returned from a previous call to `getPhotos`. Ex. **ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED/L0/001**
 

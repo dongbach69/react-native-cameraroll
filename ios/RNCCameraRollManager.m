@@ -395,7 +395,14 @@ RCT_EXPORT_METHOD(getSelectedPhoto:(NSString *)selectedPhotoId
     PHFetchResult<PHAsset *> *fetchResult;
     PHAsset *asset;
     
-    fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[selectedPhotoId] options:nil];
+    NSString *photoidentifier = selectedPhotoId;
+    
+    if ([selectedPhotoId rangeOfString:@"ph://"].location != NSNotFound) {
+      photoidentifier = [selectedPhotoId stringByReplacingOccurrencesOfString:@"ph://"
+                                                                   withString:@""];
+    }
+    
+    fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[photoidentifier] options:nil];
     if(fetchResult){
       asset = fetchResult.firstObject;//only object in the array.
     }
@@ -417,13 +424,12 @@ RCT_EXPORT_METHOD(getSelectedPhoto:(NSString *)selectedPhotoId
         return;
       }
       PHAssetResource *const _Nonnull resource = [assetResources firstObject];
+      
       NSString *const origFilename = resource.originalFilename;
       
       
       [asset requestContentEditingInputWithOptions:[PHContentEditingInputRequestOptions new] completionHandler:^(PHContentEditingInput *contentEditingInput, NSDictionary *info) {
-        
         imageURL = contentEditingInput.fullSizeImageURL;
-            
         if (imageURL.absoluteString.length != 0) {
           NSString *filepath = [imageURL.absoluteString stringByReplacingOccurrencesOfString:@"pathfile:"
                                                                                   withString:@"file:"];

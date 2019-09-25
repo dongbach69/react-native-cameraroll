@@ -211,9 +211,6 @@ Returns a Promise which when resolved will be of the following shape:
     * `heading`: {number}
     * `speed`: {number}
 
-### Note
-`getSelectedPhoto()` method works only in **iOS**
-
 #### Example
 
 Loading images:

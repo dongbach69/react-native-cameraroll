@@ -92,6 +92,28 @@ export type PhotoIdentifier = {
   },
 };
 
+export type SelectedPhotoIdentifier = {
+  node: {
+    type: string,
+    image: {
+      filename: string,
+      filepath: string,
+      height: number,
+      width: number,
+      isStored?: boolean,
+      playableDuration: number,
+    },
+    timestamp: number,
+    location?: {
+      latitude?: number,
+      longitude?: number,
+      altitude?: number,
+      heading?: number,
+      speed?: number,
+    },
+  },
+};
+
 export type PhotoIdentifiersPage = {
   edges: Array<PhotoIdentifier>,
   page_info: {
@@ -187,7 +209,7 @@ class CameraRoll {
     return RNCCameraRoll.getPhotos(params);
   }
 
-  static getSelectedPhoto(params: selectedPhotoId): Promise<string> {
+  static getSelectedPhoto(params: selectedPhotoId): Promise<SelectedPhotoIdentifier> {
     if (Platform.OS == 'android') {
       console.warn(
         'CameraRoll.getSelectedPhoto(selectedPhotoId) can only be used with iOS. Android platform does not require this method.',

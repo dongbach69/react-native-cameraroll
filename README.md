@@ -169,6 +169,8 @@ Returns a Promise which when resolved will be of the following shape:
   * `start_cursor`: {string}
   * `end_cursor`: {string}
 
+---
+
 ### `getSelectedPhoto()`
 
 ```javascript

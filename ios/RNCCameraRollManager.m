@@ -403,17 +403,56 @@ RCT_EXPORT_METHOD(getSelectedPhoto:(NSString *)selectedPhotoId
     if(asset){
       __block NSURL *imageURL = [[NSURL alloc]initWithString:@""];
       
+      NSString *const assetMediaTypeLabel = (asset.mediaType == PHAssetMediaTypeVideo
+                                             ? @"video"
+                                             : (asset.mediaType == PHAssetMediaTypeImage
+                                                ? @"image"
+                                                : (asset.mediaType == PHAssetMediaTypeAudio
+                                                   ? @"audio"
+                                                   : @"unknown")));
+      CLLocation *const loc = asset.location;
+      
+      NSArray<PHAssetResource *> *const assetResources = [PHAssetResource assetResourcesForAsset:asset];
+      if (![assetResources firstObject]) {
+        return;
+      }
+      PHAssetResource *const _Nonnull resource = [assetResources firstObject];
+      NSString *const origFilename = resource.originalFilename;
+      
+      
       [asset requestContentEditingInputWithOptions:[PHContentEditingInputRequestOptions new] completionHandler:^(PHContentEditingInput *contentEditingInput, NSDictionary *info) {
+        
         imageURL = contentEditingInput.fullSizeImageURL;
+            
         if (imageURL.absoluteString.length != 0) {
-          imageURL.absoluteString = [imageURL.absoluteString stringByReplacingOccurrencesOfString:@"pathfile:"
-                                                                                       withString:@"file:"];
-          resolve(imageURL.absoluteString);
+          NSString *filepath = [imageURL.absoluteString stringByReplacingOccurrencesOfString:@"pathfile:"
+                                                                                  withString:@"file:"];
+          resolve(@{
+                    @"node": @{
+                        @"type": assetMediaTypeLabel,
+                        @"image": @{
+                            @"filepath": filepath,
+                            @"filename": origFilename,
+                            @"height": @([asset pixelHeight]),
+                            @"width": @([asset pixelWidth]),
+                            @"isStored": @YES,
+                            @"playableDuration": @([asset duration]) // fractional seconds
+                            },
+                        @"timestamp": @(asset.creationDate.timeIntervalSince1970),
+                        @"location": (loc ? @{
+                                              @"latitude": @(loc.coordinate.latitude),
+                                              @"longitude": @(loc.coordinate.longitude),
+                                              @"altitude": @(loc.altitude),
+                                              @"heading": @(loc.course),
+                                              @"speed": @(loc.speed), // speed in m/s
+                                              } : @{})
+                        }
+                    });
         } else {
           NSString *errorMessage = [NSString stringWithFormat:@"Failed to load asset"
                                     " with localIdentifier %@ with no error message.", selectedPhotoId];
           NSError *error = RCTErrorWithMessage(errorMessage);
-          reject(@"Error while getting file path",@"",error);
+          reject(@"Error while getting file path",@"Eror while getting file path",error);
         }
       }];
       
@@ -421,11 +460,12 @@ RCT_EXPORT_METHOD(getSelectedPhoto:(NSString *)selectedPhotoId
       NSString *errorMessage = [NSString stringWithFormat:@"Failed to load asset"
                                 " with localIdentifier %@ with no error message.", selectedPhotoId];
       NSError *error = RCTErrorWithMessage(errorMessage);
-      reject(@"No asset found",@"",error);
+      reject(@"No asset found",@"No asset found",error);
     }
     
   });
 }
+
 
 static void checkPhotoLibraryConfig()
 {

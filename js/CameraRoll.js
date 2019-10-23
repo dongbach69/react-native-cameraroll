@@ -209,7 +209,7 @@ class CameraRoll {
     return RNCCameraRoll.getPhotos(params);
   }
 
-  static getSelectedPhoto(params: selectedPhotoId): Promise<SelectedPhotoIdentifier> {
+  static getSelectedPhoto(params): Promise<SelectedPhotoIdentifier> {
     if (Platform.OS == 'android') {
       console.warn(
         'CameraRoll.getSelectedPhoto(selectedPhotoId) can only be used with iOS. Android platform does not require this method.',

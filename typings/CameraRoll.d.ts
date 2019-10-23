@@ -27,6 +27,28 @@ declare namespace CameraRoll {
     assetType?: AssetType;
     mimeTypes?: Array<string>;
   }
+  
+    export type SelectedPhotoIdentifier = {
+  node: {
+    type: string,
+    image: {
+      filename: string,
+      filepath: string,
+      height: number,
+      width: number,
+      isStored?: boolean,
+      playableDuration: number,
+    },
+    timestamp: number,
+    location?: {
+      latitude?: number,
+      longitude?: number,
+      altitude?: number,
+      heading?: number,
+      speed?: number,
+    },
+  },
+};
 
   interface PhotoIdentifier {
     node: {
@@ -91,6 +113,8 @@ declare namespace CameraRoll {
      * roll of the device matching shape defined by `getPhotosReturnChecker`.
      */
     function getPhotos(params: GetPhotosParams): Promise<PhotoIdentifiersPage>;
+  
+    function getSelectedPhoto(params): Promise<SelectedPhotoIdentifier>;
 }
 
 export = CameraRoll;
